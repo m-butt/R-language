@@ -1,0 +1,77 @@
+---
+title: "Problem Set 1"
+subtitle: "INF 511"
+author: "Muhammad"
+fig-align: center
+fig-cap-location: bottom
+number-sections: true
+format: 
+    pdf: 
+        documentclass: article
+        geometry: 
+          - top=1in
+          - left=0.75in
+          - bottom=1in
+          - right=0.75in
+editor: source
+---
+
+# $\chi^2$ disribution
+## Write the probability distribution function.
+
+A chi-square distributed random variable $X$ has $n$ degrees of freedom and follows a probability density function.
+\begin{align*}
+f(x) = \frac{x^{n/2-1}e^{-x/2}}{2^{n/2}\kern 0.08 em \Gamma(n/2)} \qquad \qquad x > 0,
+\end{align*}
+$for $n = 1, \, 2, \,  \ldots \$
+
+
+```{r}
+pdf <- dchisq(seq(0, 20, by=0.1),6)
+
+```
+
+## Plot the PDF.
+
+```{r}
+plot(seq(0, 20, by=0.1), pdf, type="l", xlab="x", ylab="f(x)")
+```
+
+# Discrete distribution 
+For Question 2, the chosen distribution is the Binomial distribution.
+\begin{align*}
+\binom{n}{k} = \frac{\text{factorial}(n)}{\text{factorial}(k) \cdot \text{factorial}(n - k)}
+\end{align*}
+
+
+```{r}
+n <- 10
+p <- 0.5
+x <- 0:n
+k <- 6
+binom_coef <- factorial(n) / (factorial(k) * factorial(n - k))
+pmf <- binom_coef * p^k * (1 - p)^(n - k)
+pmf
+```
+
+## Plot the PMF
+
+```{r}
+# Define the parameters of the binomial distribution
+n <- 10
+p <- 0.5
+
+# Generate the values of x
+x <- 0:n
+
+# Calculate the PMF
+pmf <- dbinom(x, n, p)
+
+# Plot the PMF
+plot(x, pmf, type = "l", xlab = "x", ylab = "P(x | n, p)")
+points(x, pmf, pch = 19)
+
+```
+
+
+
