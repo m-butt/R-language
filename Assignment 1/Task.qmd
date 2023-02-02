@@ -1,0 +1,117 @@
+---
+title: "Assignment 1"
+subtitle: "INF 511"
+author: "Muhammad"
+fig-align: center
+fig-cap-location: bottom
+number-sections: true
+format: 
+    pdf: 
+        documentclass: article
+        geometry: 
+          - top=1in
+          - left=0.75in
+          - bottom=1in
+          - right=0.75in
+editor: source
+---
+
+## Provided 
+
+```{r}
+## Data, test hold-out, training data, validation data
+data(prostate, package="faraway")
+dim(prostate)
+names(prostate)
+set.seed(20500 + 5150)
+(hold.out<- sample(1:dim(prostate)[1],size=1)) ## 12th (`test') case held out
+
+y<- prostate$lpsa[-hold.out] ## <-- outputs (minus 12th case)
+X<- as.matrix(prostate[-hold.out,-9]) ## <-- inputs (minus 12th)
+phold.out<- prostate[hold.out,,drop=FALSE] ## 12th case to `test' later
+prostate<- cbind.data.frame(lpsa=y,X) ## same name! n=96 now
+
+## Randomly choose n=72 training cases, with remaining n*=24 for
+## validation.
+set.seed(24601 + 711) ## Jean Valjean gets a Big Gulp
+(ntot<- dim(prostate)[1])
+(n<- ntot*0.75) ##<-- training set size
+trainindx<- sample(x=1:ntot, size=n, replace=FALSE)
+train.df<- prostate[trainindx,]
+val.df<- prostate[-trainindx,]
+(k<-dim(X)[2])
+```
+
+## Problem 1
+
+To solve this problem, we use the **`regsubsets`** function from the **`leaps`** library. This function fits all possible subsets of the input variables to the training data and returns the best models for each size.
+
+Here is a step-by-step explanation of the code:
+
+1.  Load the **`leaps`** library:
+
+    ```{r}
+    library(leaps)
+    ```
+
+2.  Fit all subsets model on the training data using the **`regsubsets`** function:
+
+    ```{r}
+    fit.full <- regsubsets(lpsa~., data=train.df, nvmax=k)
+    ```
+
+This line fits a linear regression model for all possible subsets of the input variables to the training data. The **`lpsa`** variable is the dependent variable and the **`.`** represents all the independent variables. The **`nvmax`** argument is the maximum number of variables that can be included in the model, which is set to **`k`**. The fitted models are stored in the **`fit.full`** object.
+
+3.  Initialize an empty vector to store the validation MSE values:
+
+    ```{r}
+    val.error <- rep(NA, k)
+    ```
+
+4.  Loop over the size of the model, from 1 to **`k`**: In each iteration of the loop, fit a linear regression model to the validation data, using the **`i`**-th best subset of variables selected from the training data This line fits a linear regression model to the validation data using only the **`i`**-th best subset of variables selected from the training data. The **`subset`** argument is used to specify which variables should be included in the model.
+
+    ```{r}
+    for(i in 1:k){
+         val.fit <- lm(lpsa~., data=val.df, subset=fit.full$which[i,])
+          val.error[i] <- mean((val.fit$fitted.values - val.df$lpsa)^2)
+    }
+    ```
+
+5.  This line plots the validation MSE values against the size of the model, with the size of the model on the x-axis and the validation MSE on the y-axis. The **`type`** argument is set to **`"b"`**, which means a line plot with points.
+
+    ```{r}
+    plot(val.error, xlab="Model size", ylab="Validation MSE", type="b")
+    ```
+
+6.  Show the k=8 validation MSE (MSPR) values
+
+    ```{r}
+    val.error
+    ```
+
+## Problem 2
+
+1.  Fit the best model to the entire data set
+
+    ```{r}
+    best_model <- regsubsets(lpsa ~ ., data = train.df, nvmax = k)
+    best_model_fit <- lm(lpsa ~ ., data = train.df, subset = best_model$which.min)
+    ```
+
+2.  Create a 95% prediction interval for the hold out case
+
+    ```{r}
+    test_prediction <- predict(best_model_fit, newdata = phold.out, interval = "confidence", level = 0.95)
+    ```
+
+3.  Output of the best model fit
+
+    ```{r}
+    summary(best_model_fit)
+    ```
+
+4.  Prediction interval
+
+    ```{r}
+    test_prediction
+    ```
