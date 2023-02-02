@@ -1,0 +1,64 @@
+---
+title: "Problem Set 0"
+author: "Muhammad"
+subtitle: "INF 511"
+fig-align: center
+fig-cap-location: bottom
+format: 
+    pdf: 
+        documentclass: article
+        geometry: 
+          - top=1in
+          - left=0.75in
+          - bottom=1in
+          - right=0.75in
+editor: source
+---
+
+```{r}
+# Q no 1
+store_array = vector(mode = "numeric",length = 10)
+
+array_len = length(store_array)
+
+for(i in 1:array_len){
+  store_array[i] = i*i
+}
+store_array
+
+# Extract the 5th element of the array:
+fifthelement <- store_array[5]
+print(fifthelement)
+
+
+```
+
+```{r}
+#Q no 2
+#| fig-width: 5
+#| fig-height: 4.5
+my_df = data.frame(
+  y_var = c(1, 4, 3, 2, 8, 7, 1.5, 10, 9, 11),
+  x_var = c(11:20)
+)
+# Set #| fig-width: 5 #| fig-height: 4.5
+
+par(mar = c(5, 4, 4, 2) + 0.1, cex = 1) # set the margin and character expansion
+# Use the plot() function
+plot(x = my_df$x_var, y = my_df$y_var,
+     xlab = "X-axis", ylab = "Y-axis",
+     pch = 22, col = "red")
+
+```
+
+```{r}
+#Q no 3
+my_df = data.frame(
+  y_var = c(1, 4, 3, 2, 8, 7, 1.5, 10, 9, 11),
+  x_var = c(11:20)
+)
+my_lm = lm(y_var ~ x_var, data = my_df)
+summary(my_lm)
+
+# The estimate of the slope is 0.9545 and the estimate of the intercept is -9.1455.
+```
