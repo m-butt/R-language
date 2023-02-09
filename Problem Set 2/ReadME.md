@@ -1,1 +1,1 @@
-Well all set
+The problem is not tough, but here you can see, outside the code snippet we can write latex notation inclosed in $$ sign and also use begin and end commands to write the Latext style text that can render better on PDF
